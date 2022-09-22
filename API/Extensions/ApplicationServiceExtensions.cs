@@ -9,24 +9,29 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Extensions
 {
-    public static class ApplicationServiceExtensions
+  public static class ApplicationServiceExtensions
+  {
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
-            });
-            services.AddSingleton<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
-            services.AddLogging(config =>
-            {
-                config.AddConsole();
-            });
+      // Strongly typed configuration 
+      services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
-            return services;
-        }
+      services.AddDbContext<DataContext>(options =>
+      {
+        options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+      });
+      services.AddSingleton<ITokenService, TokenService>();
+      services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+
+      services.AddLogging(config =>
+      {
+        config.AddConsole();
+      });
+
+      services.AddScoped<IUserRepository, UserRepository>();
+      services.AddScoped<IPhotoService, PhotoService>();
+      return services;
     }
+  }
 }
