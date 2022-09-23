@@ -5,6 +5,7 @@ using API.Data;
 using API.DTO;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,16 +18,19 @@ namespace API.Controllers
     private readonly ILogger<AccountController> _logger;
     private readonly ITokenService _tokenService;
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
     public AccountController(DataContext context,
      ILogger<AccountController> logger,
      ITokenService tokenService,
-     IUserRepository userRepository)
+     IUserRepository userRepository,
+     IMapper mapper)
     {
       _context = context;
       _logger = logger;
       _tokenService = tokenService;
       _userRepository = userRepository;
+      this._mapper = mapper;
     }
 
     [HttpPost("register")]
@@ -34,18 +38,14 @@ namespace API.Controllers
     {
       var username = request.Username;
       var password = request.Password;
-      _logger.LogInformation($"Username={username} and password={password}");
-
       if (await CheckUserExists(username)) return BadRequest("User already taken");
-
+      var user = _mapper.Map<AppUser>(request);
       using var hmac = new HMACSHA512();
       var hashedPassword = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-      var user = new AppUser
-      {
-        UserName = username,
-        PasswordHash = hashedPassword,
-        PasswordSalt = hmac.Key
-      };
+
+      user.UserName = username.ToLower();
+      user.PasswordHash = hashedPassword;
+      user.PasswordSalt = hmac.Key;
       _context.Users.Add(user);
       await _context.SaveChangesAsync();
       return new UserDto
@@ -53,6 +53,7 @@ namespace API.Controllers
         Username = user.UserName,
         Token = _tokenService.CreateToken(user),
         PhotoUrl = user.Photos?.FirstOrDefault(x => x.IsMain)?.Url,
+        KnownAs = user.KnownAs
       };
     }
 

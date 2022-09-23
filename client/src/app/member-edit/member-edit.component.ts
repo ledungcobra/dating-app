@@ -22,6 +22,8 @@ export class MemberEditComponent implements OnInit {
     private memberService: MemberService,
     private toastr: ToastrService
   ) {
+    console.log('Calling on init');
+
     this.accountService.currentUser$.pipe(take(1)).subscribe((user) => (this.user = user));
   }
 

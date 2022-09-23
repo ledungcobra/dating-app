@@ -13,6 +13,7 @@ export class MemberListComponent implements OnInit {
   constructor(private memberService: MemberService) {}
 
   ngOnInit(): void {
+    console.log('Calling on init');
     this.members$ = this.memberService.getMembers();
   }
 }
