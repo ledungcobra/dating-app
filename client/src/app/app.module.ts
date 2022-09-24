@@ -24,9 +24,9 @@ import { MemberListComponent } from './members/member-list/member-list.component
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { MessagesComponent } from './messages/messages.component';
 import { RegisterComponent } from './register/register.component';
-import { SharedModule } from './_modules/shared.module';
-import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DateInputComponent } from './_forms/date-input/date-input.component';
+import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { SharedModule } from './_modules/shared.module';
 
 @NgModule({
   declarations: [

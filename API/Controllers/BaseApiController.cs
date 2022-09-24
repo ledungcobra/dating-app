@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BaseApiController : ControllerBase
-    {
-    }
+  [ApiController]
+  [Route("api/[controller]")]
+  [ServiceFilter(typeof(LogUserActivity))]
+  public class BaseApiController : ControllerBase
+  {
+  }
 }
